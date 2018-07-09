@@ -57,7 +57,6 @@ public class Main {
 
 			if(args[0].equalsIgnoreCase("/shutdown")) {
 				System.exit(0);
-				return;
 			}
 
 			if(args[0].equalsIgnoreCase("/details") || args[0].equalsIgnoreCase("/d")) {
@@ -71,13 +70,13 @@ public class Main {
 					this.ipcClient.sendRichPresence(this.presence.build());
 					System.out.println("Details has been updated to '" + details + "'!");
 					return;
+				} else {
+					System.out.println("Usage: /details <details>");
 				}
-				System.out.println("Usage: /details <details>");
-				return;
+			} else {
+				System.out.println("Available commands");
+				System.out.println("/shutdown - Closing Shadowverse IPC");
 			}
-
-			System.out.println("Available commands");
-			System.out.println("/shutdown - Closing Shadowverse IPC");
 		}
 	}
 
@@ -93,7 +92,7 @@ public class Main {
 		}
 		this.presence = null;
 		this.presence = new RichPresence.Builder();
-		this.presence.setDetails("Playing Rank Match");
+		this.presence.setDetails("ランクマッチをプレイ中");
 		this.presence.setStartTimestamp(OffsetDateTime.now());
 		this.presence.setSmallImage("mini", "Shadowverse から逃げるな");
 		this.presence.setLargeImage("shadowverse", "Shadowverse");
