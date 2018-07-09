@@ -1,7 +1,5 @@
 package net.simplyrin.shadowverse.rp;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.OffsetDateTime;
@@ -46,9 +44,6 @@ public class Main {
 	}
 
 	public void run() {
-		File file = new File(".");
-		System.out.println(file.getPath());
-
 		this.startTask();
 		this.addShutdownHook();
 		this.keepAlive();
@@ -122,13 +117,13 @@ public class Main {
 
 				if(isShadowverse) {
 					if(!this.back) {
-						System.out.println("Shadowverse が実行されています。");
+						System.out.println("Shadowverse.exe の起動を検知しました。");
 						this.connect();
 						this.back = true;
 						this.ifNull = true;
 					}
 				} else if(this.back) {
-					System.out.println("Shadowverse 以外が実行されています。");
+					System.out.println("Shadowverse.exe の停止を検知しました。");
 					this.disconnect();
 					this.back = false;
 				}
@@ -143,35 +138,24 @@ public class Main {
 	}
 
 	public boolean isShadowverse() {
-		String title = this.getActiveWindowTitle();
-		if(title != null) {
-			if(title.equals("Shadowverse")) {
+		ProcessBuilder processBuilder = new ProcessBuilder("tasklist");
+        Process process;
+		try {
+			process = processBuilder.start();
+		} catch (IOException e) {
+			return false;
+		}
+		Scanner scanner = new Scanner(new InputStreamReader(process.getInputStream()));
+
+		while(scanner.hasNextLine()) {
+			String line = scanner.nextLine();
+
+			if(line.startsWith("Shadowverse.exe")) {
 				return true;
 			}
 		}
 
 		return false;
-	}
-
-	public String getActiveWindowTitle() {
-		String title = null;
-
-		ProcessBuilder processBuilder = new ProcessBuilder("ActiveTask.exe");
-		Process process;
-		try {
-			process = processBuilder.start();
-		} catch (IOException e) {
-			return title;
-		}
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-		try {
-			title = bufferedReader.readLine();
-		} catch (IOException e) {
-			return title;
-		}
-
-		return title;
 	}
 
 	public void keepAlive() {
@@ -193,6 +177,9 @@ public class Main {
 				Main.this.ipcClient.close();
 			}
 		});
+	}
+
+	public void println() {
 
 	}
 
